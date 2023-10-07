@@ -16,6 +16,6 @@ public class BasicNPCsClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		EntityRendererRegistry.register(BasicNPCs.NPC, NPCRenderer::new);
 
-//		EntityModelLayerRegistry.registerModelLayer(NPC_MODEL_LAYER, () -> TexturedModelData.of(BipedEntityModel.getModelData(Dilation.NONE, 0.0F), 64, 64));
+		EntityModelLayerRegistry.registerModelLayer(NPC_MODEL_LAYER, () -> TexturedModelData.of(BipedEntityModel.getModelData(Dilation.NONE, 0.0F), 64, 64));
 	}
 }
