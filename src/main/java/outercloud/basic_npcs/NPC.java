@@ -7,12 +7,13 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.ServerConfigHandler;
+import net.minecraft.screen.MerchantScreenHandler;
+import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
-import java.util.UUID;
+import java.util.OptionalInt;
 
 public class NPC extends HostileEntity {
     private static final TrackedData<String> TEXTURE = DataTracker.registerData(NPC.class, TrackedDataHandlerRegistry.STRING);
@@ -45,7 +46,9 @@ public class NPC extends HostileEntity {
 
     @Override
     protected ActionResult interactMob(PlayerEntity player, Hand hand) {
-        this.dataTracker.set(TEXTURE, "textures/entity/skeleton/skeleton.png");
+        if(this.getWorld().isClient) return ActionResult.SUCCESS;
+
+        player.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, playerInventory, playerEntity) -> new NPCScreenHandler(syncId, playerInventory), this.getDisplayName()));
 
         return ActionResult.SUCCESS;
     }

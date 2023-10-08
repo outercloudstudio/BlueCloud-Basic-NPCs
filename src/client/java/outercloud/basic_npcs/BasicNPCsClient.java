@@ -3,6 +3,7 @@ package outercloud.basic_npcs;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.model.Dilation;
 import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
@@ -17,5 +18,7 @@ public class BasicNPCsClient implements ClientModInitializer {
 		EntityRendererRegistry.register(BasicNPCs.NPC, NPCRenderer::new);
 
 		EntityModelLayerRegistry.registerModelLayer(NPC_MODEL_LAYER, () -> TexturedModelData.of(BipedEntityModel.getModelData(Dilation.NONE, 0.0F), 64, 64));
+
+		HandledScreens.register(BasicNPCs.NPC_SCREEN_HANDLER, NPCScreen::new);
 	}
 }
