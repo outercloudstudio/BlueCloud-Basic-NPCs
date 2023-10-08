@@ -4,6 +4,7 @@ import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.Registries;
@@ -18,7 +19,7 @@ public class BasicNPCs implements ModInitializer {
 	public static final EntityType<outercloud.basic_npcs.NPC> NPC = Registry.register(
 			Registries.ENTITY_TYPE,
 			new Identifier("basic_npcs", "npc"),
-			FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, outercloud.basic_npcs.NPC::new).build()
+			FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, outercloud.basic_npcs.NPC::new).dimensions(new EntityDimensions(0.5F, 2, true)).build()
 	);
 
 	@Override

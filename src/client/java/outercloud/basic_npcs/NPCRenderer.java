@@ -12,6 +12,6 @@ public class NPCRenderer extends BipedEntityRenderer<NPC, BipedEntityModel<NPC>>
 
     @Override
     public Identifier getTexture(NPC entity) {
-        return new Identifier("minecraft", "textures/entity/zombie/zombie.png");
+        return new Identifier("minecraft", entity.getTexture());
     }
 }
