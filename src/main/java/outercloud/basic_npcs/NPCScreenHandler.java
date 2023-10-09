@@ -5,9 +5,16 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
-import org.jetbrains.annotations.Nullable;
 
 public class NPCScreenHandler extends ScreenHandler {
+    NPC npc;
+
+    public NPCScreenHandler(int syncId, NPC npc) {
+        this(BasicNPCs.NPC_SCREEN_HANDLER, syncId);
+
+        this.npc = npc;
+    }
+
     public NPCScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(BasicNPCs.NPC_SCREEN_HANDLER, syncId);
     }

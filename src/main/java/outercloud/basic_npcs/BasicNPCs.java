@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 public class BasicNPCs implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("basic_npcs");
 
+	public static final Identifier PACKET_C2S_CHANGE_TEXTURE_PATH = new Identifier("basic_npcs", "change_texture_path");
+
 	public static final EntityType<NPC> NPC = Registry.register(
 			Registries.ENTITY_TYPE,
 			new Identifier("basic_npcs", "npc"),
