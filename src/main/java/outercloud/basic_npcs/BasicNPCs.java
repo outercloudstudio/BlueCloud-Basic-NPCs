@@ -43,5 +43,16 @@ public class BasicNPCs implements ModInitializer {
 			NPCScreenHandler screenHandler = (NPCScreenHandler) player.currentScreenHandler;
 			screenHandler.updateNpc(packet);
 		});
+
+		ServerPlayNetworking.registerGlobalReceiver(ReadyNPCC2SPacket.TYPE, (packet, player, sender) -> {
+			if(!(player.currentScreenHandler instanceof  NPCScreenHandler)) {
+				LOGGER.warn("Tried to ready NPC that player is no long interacting with!");
+
+				return;
+			}
+
+			NPCScreenHandler screenHandler = (NPCScreenHandler) player.currentScreenHandler;
+			screenHandler.updateNpc(player);
+		});
 	}
 }

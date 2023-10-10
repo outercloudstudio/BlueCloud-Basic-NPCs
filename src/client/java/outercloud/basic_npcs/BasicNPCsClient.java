@@ -1,6 +1,7 @@
 package outercloud.basic_npcs;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
@@ -20,5 +21,16 @@ public class BasicNPCsClient implements ClientModInitializer {
 		EntityModelLayerRegistry.registerModelLayer(NPC_MODEL_LAYER, () -> TexturedModelData.of(BipedEntityModel.getModelData(Dilation.NONE, 0.0F), 64, 64));
 
 		HandledScreens.register(BasicNPCs.NPC_SCREEN_HANDLER, NPCScreen::new);
+
+		ClientPlayNetworking.registerGlobalReceiver(UpdateNPCS2CPacket.TYPE, (packet, player, sender) -> {
+			if(!(player.currentScreenHandler instanceof  NPCScreenHandler)) {
+				BasicNPCs.LOGGER.warn("Tried to update NPC that player is no long interacting with on client!");
+
+				return;
+			}
+
+			NPCScreenHandler screenHandler = (NPCScreenHandler) player.currentScreenHandler;
+			screenHandler.updateNpc(packet);
+		});
 	}
 }

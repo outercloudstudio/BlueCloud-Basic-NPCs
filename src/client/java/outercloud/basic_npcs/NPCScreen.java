@@ -9,9 +9,11 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
+import java.io.Console;
+
 public class NPCScreen extends HandledScreen<NPCScreenHandler> {
 //    ButtonWidget testButton = ButtonWidget.builder(Text.of("Test Button"), button -> {}).dimensions(0, 0, 64, 20).tooltip(Tooltip.of(Text.of("Test Tooltip"))).build();
-    TextFieldWidget texturePathWidget;
+    private TextFieldWidget texturePathWidget;
 
     public NPCScreen(NPCScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -24,21 +26,28 @@ public class NPCScreen extends HandledScreen<NPCScreenHandler> {
     protected void init() {
         super.init();
 
-        texturePathWidget = new TextFieldWidget(textRenderer, 0, 0, 128, 20, null);
+        texturePathWidget = new TextFieldWidget(textRenderer, 0, 0, 236, 20, null);
 
         texturePathWidget.setFocusUnlocked(false);
         texturePathWidget.setEditableColor(-1);
         texturePathWidget.setUneditableColor(-1);
         texturePathWidget.setDrawsBackground(true);
         texturePathWidget.setMaxLength(50);
-        texturePathWidget.setChangedListener(this::onTexturePathChanged);
-        texturePathWidget.setText("Default Text");
+        texturePathWidget.setText("Loading...");
         texturePathWidget.setEditable(true);
 
         this.addSelectableChild(texturePathWidget);
         this.setInitialFocus(texturePathWidget);
 
         addDrawable(texturePathWidget);
+
+        handler.textPathUpdatedEvent.add(path -> {
+            texturePathWidget.setText(path);
+
+            texturePathWidget.setChangedListener(this::onTexturePathChanged);
+        });
+
+        ClientPlayNetworking.send(new ReadyNPCC2SPacket());
     }
 
     private void onTexturePathChanged(String path) {

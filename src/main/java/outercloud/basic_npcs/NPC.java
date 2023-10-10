@@ -49,7 +49,7 @@ public class NPC extends HostileEntity {
     protected ActionResult interactMob(PlayerEntity player, Hand hand) {
         if(this.getWorld().isClient) return ActionResult.SUCCESS;
 
-        player.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, playerInventory, playerEntity) -> new NPCScreenHandler(syncId, this), this.getDisplayName()));
+        player.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, playerInventory, playerEntity) -> new NPCScreenHandler(syncId, this, playerEntity), this.getDisplayName()));
 
         return ActionResult.SUCCESS;
     }
