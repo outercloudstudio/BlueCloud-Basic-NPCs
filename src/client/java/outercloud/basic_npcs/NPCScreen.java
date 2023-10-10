@@ -1,22 +1,13 @@
 package outercloud.basic_npcs;
 
-import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.listener.ServerPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.RenameItemC2SPacket;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
-
-import java.io.Console;
 
 public class NPCScreen extends HandledScreen<NPCScreenHandler> {
 //    ButtonWidget testButton = ButtonWidget.builder(Text.of("Test Button"), button -> {}).dimensions(0, 0, 64, 20).tooltip(Tooltip.of(Text.of("Test Tooltip"))).build();
@@ -48,15 +39,14 @@ public class NPCScreen extends HandledScreen<NPCScreenHandler> {
         this.setInitialFocus(texturePathWidget);
 
         addDrawable(texturePathWidget);
-
-        System.out.println(handler.npc);
     }
 
     private void onTexturePathChanged(String path) {
-        PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
-        data.writeString(path);
+       updateNPC();
+    }
 
-        ClientPlayNetworking.send(BasicNPCs.PACKET_C2S_CHANGE_TEXTURE_PATH, data);
+    private void updateNPC() {
+        ClientPlayNetworking.send(new UpdateNPCC2SPacket(this.texturePathWidget.getText()));
     }
 
     @Override

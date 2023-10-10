@@ -7,13 +7,10 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
-
-import java.util.OptionalInt;
 
 public class NPC extends HostileEntity {
     private static final TrackedData<String> TEXTURE = DataTracker.registerData(NPC.class, TrackedDataHandlerRegistry.STRING);
@@ -30,6 +27,10 @@ public class NPC extends HostileEntity {
 
     public String getTexture() {
         return this.dataTracker.get(TEXTURE);
+    }
+
+    public void setTexture(String path) {
+        this.dataTracker.set(TEXTURE, path);
     }
 
     public void writeCustomDataToNbt(NbtCompound nbt) {

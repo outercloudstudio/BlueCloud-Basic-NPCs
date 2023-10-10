@@ -2,6 +2,7 @@ package outercloud.basic_npcs;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityDimensions;
@@ -18,8 +19,6 @@ import org.slf4j.LoggerFactory;
 public class BasicNPCs implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("basic_npcs");
 
-	public static final Identifier PACKET_C2S_CHANGE_TEXTURE_PATH = new Identifier("basic_npcs", "change_texture_path");
-
 	public static final EntityType<NPC> NPC = Registry.register(
 			Registries.ENTITY_TYPE,
 			new Identifier("basic_npcs", "npc"),
@@ -33,5 +32,16 @@ public class BasicNPCs implements ModInitializer {
 		FabricDefaultAttributeRegistry.register(NPC, outercloud.basic_npcs.NPC.createMobAttributes());
 
 		Registry.register(Registries.SCREEN_HANDLER, new Identifier("basic_npcs", "npc"), NPC_SCREEN_HANDLER);
+
+		ServerPlayNetworking.registerGlobalReceiver(UpdateNPCC2SPacket.TYPE, (packet, player, sender) -> {
+			if(!(player.currentScreenHandler instanceof  NPCScreenHandler)) {
+				LOGGER.warn("Tried to update NPC that player is no long interacting with!");
+
+				return;
+			}
+
+			NPCScreenHandler screenHandler = (NPCScreenHandler) player.currentScreenHandler;
+			screenHandler.updateNpc(packet);
+		});
 	}
 }

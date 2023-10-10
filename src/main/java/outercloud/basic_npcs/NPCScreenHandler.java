@@ -7,7 +7,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 
 public class NPCScreenHandler extends ScreenHandler {
-    NPC npc;
+    private NPC npc;
 
     public NPCScreenHandler(int syncId, NPC npc) {
         this(BasicNPCs.NPC_SCREEN_HANDLER, syncId);
@@ -31,5 +31,9 @@ public class NPCScreenHandler extends ScreenHandler {
     @Override
     public boolean canUse(PlayerEntity player) {
         return true;
+    }
+
+    public void updateNpc(UpdateNPCC2SPacket packet) {
+        this.npc.setTexture(packet.TexturePath);
     }
 }
