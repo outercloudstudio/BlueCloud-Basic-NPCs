@@ -1,19 +1,28 @@
 package outercloud.basic_npcs;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
+import outercloud.basic_npcs.mixins.client.TextureManagerMixin;
 
-import java.io.Console;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Stream;
 
 public class NPCScreen extends HandledScreen<NPCScreenHandler> {
 //    ButtonWidget testButton = ButtonWidget.builder(Text.of("Test Button"), button -> {}).dimensions(0, 0, 64, 20).tooltip(Tooltip.of(Text.of("Test Tooltip"))).build();
     private TextFieldWidget texturePathWidget;
+    private ArrayList<ButtonWidget> texturePathAutoCompletionOptionWidgets = new ArrayList<>();
+
+    private Set<Identifier> allEntityTextures;
 
     public NPCScreen(NPCScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -32,14 +41,12 @@ public class NPCScreen extends HandledScreen<NPCScreenHandler> {
         texturePathWidget.setEditableColor(-1);
         texturePathWidget.setUneditableColor(-1);
         texturePathWidget.setDrawsBackground(true);
-        texturePathWidget.setMaxLength(50);
+        texturePathWidget.setMaxLength(100);
         texturePathWidget.setText("Loading...");
         texturePathWidget.setEditable(true);
+        addDrawableChild(texturePathWidget);
 
-        this.addSelectableChild(texturePathWidget);
-        this.setInitialFocus(texturePathWidget);
-
-        addDrawable(texturePathWidget);
+        setInitialFocus(texturePathWidget);
 
         handler.textPathUpdatedEvent.add(path -> {
             texturePathWidget.setText(path);
@@ -47,11 +54,32 @@ public class NPCScreen extends HandledScreen<NPCScreenHandler> {
             texturePathWidget.setChangedListener(this::onTexturePathChanged);
         });
 
+        allEntityTextures = getAllEntityTextures();
+
         ClientPlayNetworking.send(new ReadyNPCC2SPacket());
     }
 
+    private Set<Identifier> getAllEntityTextures() {
+        return ((TextureManagerMixin)MinecraftClient.getInstance().getTextureManager()).getResourceContainer().findAllResources("textures", identifier -> identifier.getPath().startsWith("textures/entity/")).keySet();
+    }
+
     private void onTexturePathChanged(String path) {
-       updateNPC();
+        texturePathAutoCompletionOptionWidgets.forEach(this::remove);
+        texturePathAutoCompletionOptionWidgets = new ArrayList<>();
+
+        Stream<Identifier> autoCompletions = allEntityTextures.stream().filter(identifier -> identifier.toString().startsWith(path));
+
+        autoCompletions.forEach(identifier -> {
+            ButtonWidget widget = ButtonWidget.builder(Text.of(identifier.toString().substring(path.length())), buttonWidget -> {
+                texturePathWidget.setText(identifier.toString());
+            }).dimensions(0, 0, 236, 14).build();
+
+            addDrawableChild(widget);
+
+            texturePathAutoCompletionOptionWidgets.add(widget);
+        });
+
+        updateNPC();
     }
 
     private void updateNPC() {
@@ -83,6 +111,13 @@ public class NPCScreen extends HandledScreen<NPCScreenHandler> {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         texturePathWidget.setX(originX() + 6);
         texturePathWidget.setY(originY() + 18);
+
+        for(int completionIndex = 0; completionIndex < texturePathAutoCompletionOptionWidgets.size(); completionIndex++) {
+            ButtonWidget widget = texturePathAutoCompletionOptionWidgets.get(completionIndex);
+
+            widget.setX(originX() + 6);
+            widget.setY(originY() + 18 + 20 + completionIndex * 14);
+        }
 
         super.render(context, mouseX, mouseY, delta);
     }

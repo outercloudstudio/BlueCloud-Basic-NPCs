@@ -22,7 +22,12 @@
 			"outercloud.basic_npcs.BasicNPCsClient"
 		]
 	},
-	"mixins": [],
+	"mixins": [
+		{
+			"config": "basic_npcs.client.mixins.json",
+			"environment": "client"
+		}
+	],
 	"depends": {
 		"fabricloader": ">=0.14.22",
 		"minecraft": "~1.20.2",

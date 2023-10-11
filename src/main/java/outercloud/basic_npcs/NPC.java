@@ -10,6 +10,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
 public class NPC extends HostileEntity {
@@ -30,6 +31,12 @@ public class NPC extends HostileEntity {
     }
 
     public void setTexture(String path) {
+        if(!Identifier.isValid(path)) {
+            BasicNPCs.LOGGER.warn("Attempted to set invalid identifier as texture path. Cancelling to prevent a crash! " + path);
+
+            return;
+        }
+
         this.dataTracker.set(TEXTURE, path);
     }
 
