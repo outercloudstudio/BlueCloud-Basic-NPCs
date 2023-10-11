@@ -3,22 +3,23 @@ package outercloud.basic_npcs;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
+import outercloud.basic_npcs.mixins.client.ScreenMixin;
 import outercloud.basic_npcs.mixins.client.TextureManagerMixin;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Stream;
 
 public class NPCScreen extends HandledScreen<NPCScreenHandler> {
-//    ButtonWidget testButton = ButtonWidget.builder(Text.of("Test Button"), button -> {}).dimensions(0, 0, 64, 20).tooltip(Tooltip.of(Text.of("Test Tooltip"))).build();
     private TextFieldWidget texturePathWidget;
     private ArrayList<ButtonWidget> texturePathAutoCompletionOptionWidgets = new ArrayList<>();
 
@@ -99,36 +100,22 @@ public class NPCScreen extends HandledScreen<NPCScreenHandler> {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    private int originX() {
-        return (this.width - this.backgroundWidth) / 2;
-    }
-
-    private int originY() {
-        return (this.height - this.backgroundHeight) / 2;
-    }
-
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        texturePathWidget.setX(originX() + 6);
-        texturePathWidget.setY(originY() + 18);
+        this.renderBackground(context, mouseX, mouseY, delta);
 
-        for(int completionIndex = 0; completionIndex < texturePathAutoCompletionOptionWidgets.size(); completionIndex++) {
-            ButtonWidget widget = texturePathAutoCompletionOptionWidgets.get(completionIndex);
+        Iterator<Drawable> drawableIterator = ((ScreenMixin)this).getDrawables().iterator();
 
-            widget.setX(originX() + 6);
-            widget.setY(originY() + 18 + 20 + completionIndex * 14);
+        while(drawableIterator.hasNext()) {
+            Drawable drawable = drawableIterator.next();
+            drawable.render(context, mouseX, mouseY, delta);
         }
 
-        super.render(context, mouseX, mouseY, delta);
+        this.drawForeground(context, mouseX, mouseY);
     }
 
     @Override
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-        context.drawTexture(new Identifier("textures/gui/demo_background.png"), originX(), originY(), 0, 0, this.backgroundWidth, this.backgroundHeight);
-    }
 
-    @Override
-    protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
-        context.drawText(this.textRenderer, Text.of("NPC Config"), this.titleX, this.titleY, 4210752, false);
     }
 }

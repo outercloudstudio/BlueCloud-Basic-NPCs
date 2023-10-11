@@ -3,7 +3,8 @@
   "package": "outercloud.basic_npcs.mixins.client",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "TextureManagerMixin"
+    "TextureManagerMixin",
+    "ScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
