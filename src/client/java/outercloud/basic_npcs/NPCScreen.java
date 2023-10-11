@@ -20,34 +20,37 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public class NPCScreen extends HandledScreen<NPCScreenHandler> {
+    private ButtonWidget appearanceTabButton = ButtonWidget.builder(Text.of("Appearance"), widget -> {}).dimensions(0, 0, 70, 16).build();
     private TextFieldWidget texturePathWidget;
     private ArrayList<ButtonWidget> texturePathAutoCompletionOptionWidgets = new ArrayList<>();
+
+    private ButtonWidget behaviourTabButton = ButtonWidget.builder(Text.of("Behaviour"), widget -> {}).dimensions(70, 0, 70, 16).build();
 
     private Set<Identifier> allEntityTextures;
 
     public NPCScreen(NPCScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
 
-        this.backgroundWidth = 248;
-        this.backgroundHeight = 166;
+        addDrawableChild(appearanceTabButton);
+        addDrawableChild(behaviourTabButton);
+
+        allEntityTextures = getAllEntityTextures();
+
+        ClientPlayNetworking.send(new ReadyNPCC2SPacket());
     }
 
     @Override
     protected void init() {
         super.init();
 
-        texturePathWidget = new TextFieldWidget(textRenderer, 0, 0, 236, 20, null);
+        if(texturePathWidget != null) remove(texturePathWidget);
 
-        texturePathWidget.setFocusUnlocked(false);
-        texturePathWidget.setEditableColor(-1);
-        texturePathWidget.setUneditableColor(-1);
+        texturePathWidget = new TextFieldWidget(textRenderer, 0, 32, 300, 16, Text.of("Loading..."));
         texturePathWidget.setDrawsBackground(true);
-        texturePathWidget.setMaxLength(100);
-        texturePathWidget.setText("Loading...");
         texturePathWidget.setEditable(true);
-        addDrawableChild(texturePathWidget);
+        texturePathWidget.setMaxLength(500);
 
-        setInitialFocus(texturePathWidget);
+        addDrawableChild(texturePathWidget);
 
         handler.textPathUpdatedEvent.add(path -> {
             texturePathWidget.setText(path);
@@ -55,9 +58,7 @@ public class NPCScreen extends HandledScreen<NPCScreenHandler> {
             texturePathWidget.setChangedListener(this::onTexturePathChanged);
         });
 
-        allEntityTextures = getAllEntityTextures();
-
-        ClientPlayNetworking.send(new ReadyNPCC2SPacket());
+        setInitialFocus(texturePathWidget);
     }
 
     private Set<Identifier> getAllEntityTextures() {
@@ -70,15 +71,15 @@ public class NPCScreen extends HandledScreen<NPCScreenHandler> {
 
         Stream<Identifier> autoCompletions = allEntityTextures.stream().filter(identifier -> identifier.toString().startsWith(path));
 
-        autoCompletions.forEach(identifier -> {
-            ButtonWidget widget = ButtonWidget.builder(Text.of(identifier.toString().substring(path.length())), buttonWidget -> {
-                texturePathWidget.setText(identifier.toString());
-            }).dimensions(0, 0, 236, 14).build();
-
-            addDrawableChild(widget);
-
-            texturePathAutoCompletionOptionWidgets.add(widget);
-        });
+//        autoCompletions.forEach(identifier -> {
+//            ButtonWidget widget = ButtonWidget.builder(Text.of(identifier.toString().substring(path.length())), buttonWidget -> {
+//                texturePathWidget.setText(identifier.toString());
+//            }).dimensions(0, 0, 236, 14).build();
+//
+//            addDrawableChild(widget);
+//
+//            texturePathAutoCompletionOptionWidgets.add(widget);
+//        });
 
         updateNPC();
     }
@@ -118,4 +119,7 @@ public class NPCScreen extends HandledScreen<NPCScreenHandler> {
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
 
     }
+
+    @Override
+    protected void drawForeground(DrawContext context, int mouseX, int mouseY) {}
 }
