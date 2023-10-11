@@ -75,14 +75,22 @@ public class NPCScreen extends HandledScreen<NPCScreenHandler> {
         return ((TextureManagerMixin)MinecraftClient.getInstance().getTextureManager()).getResourceContainer().findAllResources("textures", identifier -> identifier.getPath().startsWith("textures/entity/")).keySet();
     }
 
-    private void onTexturePathChanged(String path) {
+    private List<Identifier> getCompletions(String base) {
+        return allEntityTextures.stream().filter(identifier -> identifier.toString().startsWith(base)).toList();
+    }
+
+    private String getCompletion(String base) {
         String completion = "";
 
-        List<Identifier> autoCompletions = allEntityTextures.stream().filter(identifier -> identifier.toString().startsWith(path)).toList();
+        List<Identifier> autoCompletions = getCompletions(base);
 
-        System.out.println(autoCompletions.size());
+        if(autoCompletions.size() > 0 && base.length() <= autoCompletions.get(0).toString().length()) completion = autoCompletions.get(0).toString().substring(base.length());
 
-        if(autoCompletions.size() > 0 && path.length() <= autoCompletions.get(0).toString().length()) completion = autoCompletions.get(0).toString().substring(path.length());
+        return completion;
+    }
+
+    private void onTexturePathChanged(String path) {
+        String completion = getCompletion(path);
 
         texturePathAutoCompletionWidget.setX(texturePathWidget.getX() + 4 + textRenderer.getWidth(path));
         texturePathAutoCompletionWidget.setWidth(textRenderer.getWidth(Text.of(completion)));
@@ -99,6 +107,12 @@ public class NPCScreen extends HandledScreen<NPCScreenHandler> {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
             this.client.player.closeHandledScreen();
+
+            return true;
+        }
+
+        if(this.texturePathWidget.isActive() && keyCode == GLFW.GLFW_KEY_TAB) {
+            texturePathWidget.setText(texturePathWidget.getText() + getCompletion(texturePathWidget.getText()));
 
             return true;
         }
