@@ -23,6 +23,7 @@
 		]
 	},
 	"mixins": [
+		"basic_npcs.mixins.json",
 		{
 			"config": "basic_npcs.client.mixins.json",
 			"environment": "client"

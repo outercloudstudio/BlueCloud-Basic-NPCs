@@ -1,9 +1,12 @@
 package outercloud.basic_npcs;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -11,13 +14,26 @@ import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class NPC extends HostileEntity {
+    public LivingEntity renderEntity;
+
     private static final TrackedData<String> TEXTURE = DataTracker.registerData(NPC.class, TrackedDataHandlerRegistry.STRING);
 
     protected NPC(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
+
+        renderEntity = (LivingEntity) EntityType.get("minecraft:zombie").get().create(world);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        renderEntity.tick();
+        renderEntity.age++;
     }
 
     @Override
