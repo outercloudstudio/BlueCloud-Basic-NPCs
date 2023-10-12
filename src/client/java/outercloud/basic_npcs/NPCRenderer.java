@@ -21,14 +21,9 @@ public class NPCRenderer extends BipedEntityRenderer<NPC, BipedEntityModel<NPC>>
     public void render(NPC npc, float f, float delta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light) {
         super.render(npc, f, delta, matrixStack, vertexConsumerProvider, light);
 
-//        System.out.println(npc.getLeaningPitch(delta));
-//        System.out.println(npc.getRoll());
-
         matrixStack.translate(2f, 0f, 0f);
         entityRenderDispatcher.render(npc.renderEntity, 0, 0, 0, 0, delta, matrixStack, vertexConsumerProvider, light);
         matrixStack.translate(-2f, 0f, 0f);
-
-//        System.out.println(((NPCRenderer)entityRenderDispatcher.getRenderer(npc)).getModel().leftLeg.pitch);
     }
 
     @Override

@@ -1,13 +1,11 @@
 package outercloud.basic_npcs;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -15,7 +13,6 @@ import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import outercloud.basic_npcs.mixins.LivingEntityMixin;
 
@@ -30,19 +27,26 @@ public class NPC extends HostileEntity {
         renderEntity = (LivingEntity) EntityType.get("minecraft:zombie").get().create(world);
     }
 
-    @Override
-    public void tick() {
-        super.tick();
+    private void tickRenderEntity() {
+        LivingEntityMixin livingEntityMixin = (LivingEntityMixin)renderEntity;
 
-        renderEntity.tick();
+        renderEntity.baseTick();
+
+        renderEntity.tickMovement();
+
         renderEntity.age++;
     }
 
     @Override
-    public void travel(Vec3d movementInput) {
-        super.travel(movementInput);
+    public void tick() {
+        renderEntity.setVelocity(getVelocity());
 
-        renderEntity.travel(movementInput);
+        tickRenderEntity();
+
+        renderEntity.headYaw = headYaw;
+        renderEntity.bodyYaw = bodyYaw;
+
+        super.tick();
     }
 
     @Override

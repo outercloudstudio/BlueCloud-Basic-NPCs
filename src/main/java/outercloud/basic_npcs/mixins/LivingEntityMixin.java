@@ -8,4 +8,10 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface LivingEntityMixin {
     @Invoker("updateLimbs")
     public void invokeUpdateLimbs(float deltaMovement);
+
+    @Invoker("turnHead")
+    public float invokeTurnHead(float bodyYaw, float headYaw);
+
+    @Invoker("updateAttributes")
+    public void invokeUpdateAttributes();
 }
