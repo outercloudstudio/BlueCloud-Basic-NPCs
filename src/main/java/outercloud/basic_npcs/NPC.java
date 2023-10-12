@@ -39,6 +39,8 @@ public class NPC extends HostileEntity {
 
     @Override
     public void tick() {
+        if(!getTexture().equals(EntityType.getId(renderEntity.getType()).toString())) updateRenderedEntity();
+
         renderEntity.setVelocity(getVelocity());
 
         tickRenderEntity();
@@ -87,6 +89,18 @@ public class NPC extends HostileEntity {
         super.writeCustomDataToNbt(nbt);
 
         nbt.putString("Texture", getTexture());
+    }
+
+    public void updateRenderedEntity() {
+        LivingEntity oldRenderEntity = renderEntity;
+
+        try {
+            renderEntity = (LivingEntity) EntityType.get(getTexture()).get().create(getWorld());
+        } catch (Exception exception) {
+
+        }
+
+        oldRenderEntity.remove(RemovalReason.DISCARDED);
     }
 
     public void readCustomDataFromNbt(NbtCompound nbt) {

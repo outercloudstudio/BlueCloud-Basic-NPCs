@@ -50,22 +50,16 @@ public class NPCScreenHandler extends ScreenHandler {
 
     // Called when server receives client ready packet
     public void updateNpc(PlayerEntity player) {
-        BasicNPCs.LOGGER.info("Ready: " + npc.getTexture());
-
         ServerPlayNetworking.send((ServerPlayerEntity) player, new UpdateNPCS2CPacket(npc.getTexture()));
     }
 
     // Called when client updates npc
     public void updateNpc(UpdateNPCC2SPacket packet) {
-        BasicNPCs.LOGGER.info("Update from client: " + packet.TexturePath);
-
         textPathUpdatedEvent.forEach(response -> response.accept(packet.TexturePath));
     }
 
     // Called when server sends update packet
     public void updateNpc(UpdateNPCS2CPacket packet) {
-        BasicNPCs.LOGGER.info("Update from server: " + packet.TexturePath);
-
         textPathUpdatedEvent.forEach(response -> response.accept(packet.TexturePath));
     }
 }
