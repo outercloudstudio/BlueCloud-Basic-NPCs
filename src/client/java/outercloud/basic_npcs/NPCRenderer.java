@@ -7,7 +7,6 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
 
 public class NPCRenderer extends BipedEntityRenderer<NPC, BipedEntityModel<NPC>> {
     EntityRenderDispatcher entityRenderDispatcher;
@@ -22,16 +21,14 @@ public class NPCRenderer extends BipedEntityRenderer<NPC, BipedEntityModel<NPC>>
     public void render(NPC npc, float f, float delta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light) {
         super.render(npc, f, delta, matrixStack, vertexConsumerProvider, light);
 
-//        npc.renderEntity.setVelocity(npc.getVelocity());
-        npc.renderEntity.setVelocity(new Vec3d(0, 0, -1));
-        npc.renderEntity.getRoll();
+//        System.out.println(npc.getLeaningPitch(delta));
+//        System.out.println(npc.getRoll());
 
         matrixStack.translate(2f, 0f, 0f);
         entityRenderDispatcher.render(npc.renderEntity, 0, 0, 0, 0, delta, matrixStack, vertexConsumerProvider, light);
         matrixStack.translate(-2f, 0f, 0f);
 
-//        System.out.println(npc.renderEntity.getVelocity().length());
-//        System.out.println(this.model.leftLeg.pitch);
+//        System.out.println(((NPCRenderer)entityRenderDispatcher.getRenderer(npc)).getModel().leftLeg.pitch);
     }
 
     @Override

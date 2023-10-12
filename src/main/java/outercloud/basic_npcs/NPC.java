@@ -3,6 +3,7 @@ package outercloud.basic_npcs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -16,6 +17,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import outercloud.basic_npcs.mixins.LivingEntityMixin;
 
 public class NPC extends HostileEntity {
     public LivingEntity renderEntity;
@@ -34,6 +36,27 @@ public class NPC extends HostileEntity {
 
         renderEntity.tick();
         renderEntity.age++;
+    }
+
+    @Override
+    public void travel(Vec3d movementInput) {
+        super.travel(movementInput);
+
+        renderEntity.travel(movementInput);
+    }
+
+    @Override
+    public void updateLimbs(float delta) {
+        super.updateLimbs(delta);
+
+        ((LivingEntityMixin)renderEntity).invokeUpdateLimbs(delta);
+    }
+
+    @Override
+    public void onDamaged(DamageSource damageSource) {
+        super.onDamaged(damageSource);
+
+        renderEntity.onDamaged(damageSource);
     }
 
     @Override
